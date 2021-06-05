@@ -10,7 +10,7 @@ public class Controller : MonoBehaviour
     private bool facingRight = true;
     private bool isJumping = false;
     public Animator animator;
-    private Vector3 start = new Vector3(0, 0, 0);
+    private Vector3 checkpoint = new Vector3(0, 0, 0);
 
     // Start is called before the first frame update
     void Start()
@@ -71,7 +71,7 @@ public class Controller : MonoBehaviour
     private void Restart()
     {
         animator.Play("blueRestart");
-        changePosition(start);
+        changePosition(checkpoint);
     }
 
     void OnCollisionEnter2D(Collision2D col)
@@ -82,6 +82,12 @@ public class Controller : MonoBehaviour
         {
             Restart();
         }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log(collision);
+        checkpoint = collision.transform.position;
     }
 
     // Update is called once per frame
