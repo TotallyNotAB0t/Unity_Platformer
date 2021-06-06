@@ -11,6 +11,8 @@ public class Controller : MonoBehaviour
     private bool isJumping = false;
     public Animator animator;
     private Vector3 checkpoint = new Vector3(0, 0, 0);
+    private bool canMove = true;
+    //private int Lives = 3;
 
     // Start is called before the first frame update
     void Start()
@@ -45,6 +47,25 @@ public class Controller : MonoBehaviour
         isJumping = false;
     }
 
+    //Joue l'animation de mort et enclenche la fonction Restart (event de l'animator)
+    private void Die()
+    {
+        animator.Play("blueDie");
+        NotMove();
+    }
+
+    //body.constraints not working on X axis so I just cooked my function
+    private void NotMove()
+    {
+        canMove = false;
+    }
+
+    //Same as above
+    private void MoveAgain()
+    {
+        canMove = true;
+    }
+
     //Check le cote ou se situe le personnage et le fait tourner si besoin
     private void Turn()
     {
@@ -72,15 +93,16 @@ public class Controller : MonoBehaviour
     {
         animator.Play("blueRestart");
         changePosition(checkpoint);
+        MoveAgain();
     }
 
     void OnCollisionEnter2D(Collision2D col)
     {
         Debug.Log(col.collider);
-        //Si on rentre en contact avec une scie
-        if (col.collider.name == "Saw")
+        //Si on rentre en contact avec une scie ou un ennemi
+        if (col.collider.name == "Saw" || col.collider.name == "FrogEnemy")
         {
-            Restart();
+            Die();
         }
     }
 
@@ -93,10 +115,14 @@ public class Controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Move();
+        if (canMove)
+        {
+            Move();
 
-        Turn();
+            Turn();
 
-        Jump();
+            Jump();
+        }
+
     }
 }
