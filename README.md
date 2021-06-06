@@ -23,9 +23,10 @@ Here is the current working features :
 - Every movement animated, except death.
 - Small Menu with 2 buttons : one to switch to the game scene, the other to quit the app
 - Add checkpoints
+- Add a real death (and don't allow the player to move)
 
 Features to be implemented :
-- Add a real death (and don't allow the player to move)
+- Add lives
 - Add ennemies + their scripted movement
 - Add moving platforms
 - Maybe add a walljump feature
