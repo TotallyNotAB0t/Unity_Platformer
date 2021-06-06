@@ -11,6 +11,7 @@ public class Controller : MonoBehaviour
     private bool isJumping = false;
     public Animator animator;
     private Vector3 checkpoint = new Vector3(0, 0, 0);
+    //private int Lives = 3;
 
     // Start is called before the first frame update
     void Start()
@@ -45,6 +46,12 @@ public class Controller : MonoBehaviour
         isJumping = false;
     }
 
+    //Joue l'animation de mort
+    private void Die()
+    {
+        animator.Play("BlueDie");
+    }
+
     //Check le cote ou se situe le personnage et le fait tourner si besoin
     private void Turn()
     {
@@ -77,10 +84,10 @@ public class Controller : MonoBehaviour
     void OnCollisionEnter2D(Collision2D col)
     {
         Debug.Log(col.collider);
-        //Si on rentre en contact avec une scie
-        if (col.collider.name == "Saw")
+        //Si on rentre en contact avec une scie ou un ennemi
+        if (col.collider.name == "Saw" || col.collider.name == "FrogEnemy")
         {
-            Restart();
+            Die();
         }
     }
 
