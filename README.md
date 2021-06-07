@@ -8,10 +8,7 @@ It is using the Pixel Adventure assets by Pixel Frog : https://pixelfrog-assets.
 
 Some images :
 
-![CharacterWalking](https://user-images.githubusercontent.com/85309955/120932379-cdfb0780-c6f5-11eb-8aa5-a206416c146a.gif)
-
-![BlueCheckpoint](https://user-images.githubusercontent.com/85309955/120932414-eb2fd600-c6f5-11eb-9a37-2793722f25ec.gif)
-
+![GameNewDeath](https://user-images.githubusercontent.com/85309955/121012728-4fa37180-c798-11eb-9c41-44b544de2964.gif)
 
 Everything else was made from scratch.
 Here is the current working features :
