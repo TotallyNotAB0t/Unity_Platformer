@@ -10,6 +10,8 @@ Some images :
 
 ![GameNewDeath](https://user-images.githubusercontent.com/85309955/121012728-4fa37180-c798-11eb-9c41-44b544de2964.gif)
 
+![EnemyImprovedMovement](https://user-images.githubusercontent.com/85309955/121051591-dae12f00-c7b9-11eb-855a-9db3acac31bc.gif)
+
 Everything else was made from scratch.
 Here is the current working features :
 - Movement of the player on the X & Y axis
@@ -21,10 +23,10 @@ Here is the current working features :
 - Small Menu with 2 buttons : one to switch to the game scene, the other to quit the app
 - Add checkpoints
 - Add a real death (and don't allow the player to move)
+- Add ennemies + their scripted movement 🎊
 
 Features to be implemented :
 - Add lives
-- Add ennemies + their scripted movement
 - Add moving platforms
 - Maybe add a walljump feature
 - More to come :)
