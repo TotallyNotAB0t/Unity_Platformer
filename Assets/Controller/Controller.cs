@@ -9,11 +9,11 @@ public class Controller : MonoBehaviour
     private Rigidbody2D body;
     private Rigidbody2D enemyBody;
     private bool facingRight = true;
-    private bool isJumping = false;
     public Animator animator;
     private Vector3 checkpoint = new Vector3(0, 0, 0);
     private bool canMove = true;
     bool enemyTurned = false;
+    private Vector3 PosEnemy;
     //private int Lives = 3;
 
     // Start is called before the first frame update
@@ -21,6 +21,7 @@ public class Controller : MonoBehaviour
     {
         body = GetComponent<Rigidbody2D>();
         enemyBody = GameObject.Find("FrogEnemy").GetComponent<Rigidbody2D>();
+        PosEnemy = enemyBody.transform.position;
         Restart();
     }
 
@@ -30,7 +31,6 @@ public class Controller : MonoBehaviour
         var movement = Input.GetAxis("Horizontal");
         body.transform.position = body.transform.position + movementSpeed * Time.deltaTime * new Vector3(movement, 0, 0);
         animator.SetInteger("movementSpeed", (int)Input.GetAxisRaw("Horizontal"));
-
     }
 
     private void PlayerMovement()
@@ -38,7 +38,7 @@ public class Controller : MonoBehaviour
         if (canMove)
         {
             Move();
-            Turn(body);
+            CharacterTurn();
             Jump();
         }
     }
@@ -46,24 +46,25 @@ public class Controller : MonoBehaviour
     //Ennemi bouge et tourne
     private void EnemyMovement()
     {
+        Vector3 xPos = enemyBody.transform.position;
+
         if (!enemyTurned)
         {
-            enemyBody.transform.position = enemyBody.transform.position + movementSpeed * Time.deltaTime * new Vector3(0.5f, 0, 0);
+            enemyBody.transform.position = xPos + movementSpeed * Time.deltaTime * new Vector3(0.5f, 0, 0);
         }
         else
         {
-            enemyBody.transform.position = enemyBody.transform.position + movementSpeed * Time.deltaTime * new Vector3(-0.5f, 0, 0);
+            enemyBody.transform.position = xPos + movementSpeed * Time.deltaTime * new Vector3(-0.5f, 0, 0);
         }
-        
 
-        if (enemyBody.transform.position.x > 10 && !enemyTurned)
+        if (xPos.x > PosEnemy.x + 2 && !enemyTurned)
         {
-            enemyBody.transform.Rotate(0, -180, 0);
+            Turn(enemyBody);
             enemyTurned = true;
         }
-        else if (enemyBody.transform.position.x < 7 && enemyTurned)
+        else if (xPos.x < PosEnemy.x - 2 && enemyTurned)
         {
-            enemyBody.transform.Rotate(0, -180, 0);
+            Turn(enemyBody);
             enemyTurned = false;
         }
 
@@ -75,15 +76,16 @@ public class Controller : MonoBehaviour
         if (Input.GetButtonDown("Jump") && Mathf.Abs(body.velocity.y) < 0.0001f)
         {
             body.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+            animator.SetBool("isJumping", true);
         }
-
-        if (Mathf.Abs(body.velocity.y) > 0.0001f)
+        else if (Mathf.Abs(body.velocity.y) < 0.0001f)
         {
-            isJumping = true;
+            animator.SetBool("isJumping", false);
         }
-
-        animator.SetBool("isJumping", isJumping);
-        isJumping = false;
+        else
+        {
+            animator.SetBool("isJumping", true);
+        }
     }
 
     //Joue l'animation de mort et enclenche la fonction Restart (event de l'animator)
@@ -105,22 +107,28 @@ public class Controller : MonoBehaviour
     }
 
     //Check le cote ou se situe le personnage et le fait tourner si besoin
-    private void Turn(Rigidbody2D bod)
+    private void CharacterTurn()
     {
         if ((Input.GetAxis("Horizontal") < 0) && facingRight)
         {
-            bod.transform.Rotate(0, -180, 0);
+            Turn(body);
             facingRight = false;
 
         }
         else if ((Input.GetAxis("Horizontal") > 0) && !facingRight)
         {
-            bod.transform.Rotate(0, -180, 0);
+            Turn(body);
             facingRight = true;
         }
     }
 
-    //Teleporte le joueur a "nouvellePosition"
+    //Permet de faire tourner le sprite d'un rigidbody
+    private void Turn(Rigidbody2D bod)
+    {
+        bod.transform.Rotate(0, -180, 0);
+    }
+
+    //Teleporte un rigidbody a "nouvellePosition"
     private void ChangePosition(Rigidbody2D bod, Vector3 newPosition)
     {
         bod.transform.position = newPosition;
@@ -134,9 +142,11 @@ public class Controller : MonoBehaviour
         MoveAgain();
     }
 
+    //Gère les collisions
     void OnCollisionEnter2D(Collision2D col)
     {
         Debug.Log(col.collider);
+
         //Si on rentre en contact avec une scie ou un ennemi
         if (col.collider.name == "Saw" | col.collider.name == "FrogEnemy")
         {
