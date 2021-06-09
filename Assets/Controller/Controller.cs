@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.Animations;
 
 public class Controller : MonoBehaviour
 {
@@ -14,7 +16,10 @@ public class Controller : MonoBehaviour
     private bool canMove = true;
     bool enemyTurned = false;
     private Vector3 PosEnemy;
-    //private int Lives = 3;
+    public GameObject[] hearts;
+    private int lives = 2;
+    public Animator heartReset;
+    private bool canDie = false;
 
     // Start is called before the first frame update
     void Start()
@@ -88,9 +93,34 @@ public class Controller : MonoBehaviour
         }
     }
 
+    public void ReloadScene()
+    {
+        if (lives == 0)
+        {
+            SceneManager.LoadScene(1);
+        }
+    }
+
+    //Animation et suppression des vies
+    private void LoseHeart()
+    {
+        Animator heartAnimator = hearts[lives].GetComponent<Animator>();
+        heartAnimator.Play("heart_brocken");
+
+        if (lives > 0)
+        {
+            lives--;
+        }
+        else
+        {
+            canDie = true;
+        }
+    }
+
     //Joue l'animation de mort et enclenche la fonction Restart (event de l'animator)
     private void Die()
     {
+        LoseHeart();
         animator.Play("blueDie");
         NotMove();
     }
@@ -137,9 +167,17 @@ public class Controller : MonoBehaviour
     //Reset la position du personnage a 0
     private void Restart()
     {
-        animator.Play("blueRestart");
-        ChangePosition(body, checkpoint);
-        MoveAgain();
+        Debug.Log(lives);
+        if (canDie)
+        {
+            ReloadScene();
+        }
+        else
+        {
+            animator.Play("blueRestart");
+            ChangePosition(body, checkpoint);
+            MoveAgain();
+        }
     }
 
     //Gère les collisions
