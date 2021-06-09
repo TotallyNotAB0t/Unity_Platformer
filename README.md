@@ -24,9 +24,9 @@ Here is the current working features :
 - Add checkpoints
 - Add a real death (and don't allow the player to move)
 - Add ennemies + their scripted movement 🎊
+- Add lives (animated)
 
 Features to be implemented :
-- Add lives
 - Add moving platforms
 - Maybe add a walljump feature
 - More to come :)
