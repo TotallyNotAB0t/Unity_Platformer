@@ -8,9 +8,9 @@ It is using the Pixel Adventure assets by Pixel Frog : https://pixelfrog-assets.
 
 Some images :
 
-![GameNewDeath](https://user-images.githubusercontent.com/85309955/121012728-4fa37180-c798-11eb-9c41-44b544de2964.gif)
+![LivesDemo](https://user-images.githubusercontent.com/85309955/121821495-bdb8ce80-cc99-11eb-9275-a37fe6d27a34.gif)
 
-![EnemyImprovedMovement](https://user-images.githubusercontent.com/85309955/121051591-dae12f00-c7b9-11eb-855a-9db3acac31bc.gif)
+![PlatformDemo](https://user-images.githubusercontent.com/85309955/121821499-c6110980-cc99-11eb-8384-b8427498fb97.gif)
 
 Everything else was made from scratch.
 Here is the current working features :
@@ -21,13 +21,14 @@ Here is the current working features :
 - Restart mechanic when touching the saw
 - Every movement animated, except death.
 - Small Menu with 2 buttons : one to switch to the game scene, the other to quit the app
-- Add checkpoints
-- Add a real death (and don't allow the player to move)
-- Add ennemies + their scripted movement 🎊
-- Add lives (animated)
+- Added checkpoints
+- Added a real death (and don't allow the player to move)
+- Added ennemies + their scripted movement 🎊
+- Added lives (animated)
+- Added moving platforms
 
 Features to be implemented :
-- Add moving platforms
+
 - Maybe add a walljump feature
 - More to come :)
 

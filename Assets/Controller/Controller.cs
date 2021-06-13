@@ -20,6 +20,9 @@ public class Controller : MonoBehaviour
     private int lives = 2;
     public Animator heartReset;
     private bool canDie = false;
+    private GameObject Platform;
+    private Vector3 OriginPlatform;
+    bool PlatformGoingUp = true;
 
     // Start is called before the first frame update
     void Start()
@@ -27,6 +30,8 @@ public class Controller : MonoBehaviour
         body = GetComponent<Rigidbody2D>();
         enemyBody = GameObject.Find("FrogEnemy").GetComponent<Rigidbody2D>();
         PosEnemy = enemyBody.transform.position;
+        Platform = GameObject.Find("Platform");
+        OriginPlatform = Platform.transform.position;
         Restart();
     }
 
@@ -75,6 +80,25 @@ public class Controller : MonoBehaviour
 
     }
 
+    //Permet de faire bouger une plateforme sur l'axe des Y
+    private void PlatformMove()
+    {
+        if (Platform.transform.position.y < OriginPlatform.y + 1 && PlatformGoingUp)
+        {
+            Platform.transform.position = Platform.transform.position + Time.deltaTime * new Vector3(0, 1, 0);
+        }
+        else if (Platform.transform.position.y > OriginPlatform.y - 2)
+        {
+            PlatformGoingUp = false;
+            Platform.transform.position = Platform.transform.position + Time.deltaTime * new Vector3(0, -1, 0);
+        }
+        else
+        {
+            PlatformGoingUp = true;
+        }
+        
+    }
+
     //Fait sauter le personnage et permet a l'animator de jouer le sprite correspondant
     private void Jump()
     {
@@ -86,10 +110,6 @@ public class Controller : MonoBehaviour
         else if (Mathf.Abs(body.velocity.y) < 0.0001f)
         {
             animator.SetBool("isJumping", false);
-        }
-        else
-        {
-            animator.SetBool("isJumping", true);
         }
     }
 
@@ -183,9 +203,7 @@ public class Controller : MonoBehaviour
     //Gère les collisions
     void OnCollisionEnter2D(Collision2D col)
     {
-        Debug.Log(col.collider);
-
-        //Si on rentre en contact avec une scie ou un ennemi
+        //Si on rentre en contact avec une scie ou un ennemi le personnage meurt
         if (col.collider.name == "Saw" | col.collider.name == "FrogEnemy")
         {
             Die();
@@ -203,5 +221,6 @@ public class Controller : MonoBehaviour
     {
         EnemyMovement();
         PlayerMovement();
+        PlatformMove();
     }
 }
