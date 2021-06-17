@@ -29,6 +29,7 @@ Here is the current working features :
 
 Features to be implemented :
 
+- Add collectibles
 - Maybe add a walljump feature
 - More to come :)
 

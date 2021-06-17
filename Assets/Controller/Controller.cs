@@ -23,6 +23,9 @@ public class Controller : MonoBehaviour
     private GameObject Platform;
     private Vector3 OriginPlatform;
     bool PlatformGoingUp = true;
+    public Animator FruitAnimator;
+    public Animation KiwiCollected;
+    public TextAsset KiwiCount;
 
     // Start is called before the first frame update
     void Start()
@@ -210,10 +213,29 @@ public class Controller : MonoBehaviour
         }
     }
 
+    void FruitCollected()
+    {
+        Debug.Log("hello");
+        FruitAnimator.SetBool("isFruitCollected", true);
+    }
+
+    public void FruitGone()
+    {
+        Destroy(FruitAnimator.gameObject, 0.50f);
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log(collision);
-        checkpoint = collision.transform.position;
+        if (collision.name != "Kiwi")
+        {
+            Debug.Log(collision);
+            checkpoint = collision.transform.position;
+        } else
+        {
+            FruitCollected();
+            FruitGone();
+        }
+
     }
 
     // Update is called once per frame
