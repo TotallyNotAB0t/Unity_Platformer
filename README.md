@@ -26,10 +26,10 @@ Here is the current working features :
 - Added ennemies + their scripted movement 🎊
 - Added lives (animated)
 - Added moving platforms
+- Added collectibles !!
 
 Features to be implemented :
 
-- Add collectibles
 - Maybe add a walljump feature
 - More to come :)
 

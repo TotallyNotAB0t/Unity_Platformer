@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Animations;
+using UnityEngine.UI;
 
 public class Controller : MonoBehaviour
 {
@@ -23,9 +24,9 @@ public class Controller : MonoBehaviour
     private GameObject Platform;
     private Vector3 OriginPlatform;
     bool PlatformGoingUp = true;
-    public Animator FruitAnimator;
     public Animation KiwiCollected;
-    public TextAsset KiwiCount;
+    public Text KiwiCountDisplay;
+    private int KiwiCounter;
 
     // Start is called before the first frame update
     void Start()
@@ -213,15 +214,17 @@ public class Controller : MonoBehaviour
         }
     }
 
-    void FruitCollected()
+    void FruitCollected(Collider2D fruit)
     {
-        Debug.Log("hello");
-        FruitAnimator.SetBool("isFruitCollected", true);
+        Animator fruitAnimator = fruit.GetComponent<Animator>();
+        fruitAnimator.SetBool("isFruitCollected", true);
+        KiwiCounter += 1;
+        KiwiCountDisplay.text = KiwiCounter.ToString();
     }
 
-    public void FruitGone()
+    public void FruitGone(Collider2D fruit)
     {
-        Destroy(FruitAnimator.gameObject, 0.50f);
+        Destroy(fruit.gameObject, 0.50f);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -230,10 +233,11 @@ public class Controller : MonoBehaviour
         {
             Debug.Log(collision);
             checkpoint = collision.transform.position;
-        } else
+        }
+        else
         {
-            FruitCollected();
-            FruitGone();
+            FruitCollected(collision);
+            FruitGone(collision);
         }
 
     }
