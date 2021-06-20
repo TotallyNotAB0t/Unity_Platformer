@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.Animations;
 
 public class Controller : MonoBehaviour
 {
@@ -14,35 +10,31 @@ public class Controller : MonoBehaviour
     public Animator animator;
     private Vector3 checkpoint = new Vector3(0, 0, 0);
     private bool canMove = true;
-    bool enemyTurned = false;
+    private bool enemyTurned = false;
     private Vector3 PosEnemy;
-    public GameObject[] hearts;
-    private int lives = 2;
-    public Animator heartReset;
-    private bool canDie = false;
-    private GameObject Platform;
-    private Vector3 OriginPlatform;
-    bool PlatformGoingUp = true;
-    public Animator FruitAnimator;
-    public Animation KiwiCollected;
-    public TextAsset KiwiCount;
+    private Platform platformClass;
+    private Collectibles collectiblesClass;
+    public Hearts heartsClass;
+    private Scenes scenesClass;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         body = GetComponent<Rigidbody2D>();
         enemyBody = GameObject.Find("FrogEnemy").GetComponent<Rigidbody2D>();
         PosEnemy = enemyBody.transform.position;
-        Platform = GameObject.Find("Platform");
-        OriginPlatform = Platform.transform.position;
+        platformClass = GameObject.Find("Platform").GetComponent<Platform>();
+        heartsClass = gameObject.GetComponent<Hearts>();
+        scenesClass = GameObject.Find("Scene").GetComponent<Scenes>();
+        collectiblesClass = GameObject.Find("Collectibles").GetComponent<Collectibles>();
         Restart();
     }
 
     //Permet de deplacer le personnage et de le faire courir
     private void Move()
     {
-        var movement = Input.GetAxis("Horizontal");
-        body.transform.position = body.transform.position + movementSpeed * Time.deltaTime * new Vector3(movement, 0, 0);
+        float movement = Input.GetAxis("Horizontal");
+        body.transform.position = body.transform.position + (movementSpeed * Time.deltaTime * new Vector3(movement, 0, 0));
         animator.SetInteger("movementSpeed", (int)Input.GetAxisRaw("Horizontal"));
     }
 
@@ -61,14 +53,9 @@ public class Controller : MonoBehaviour
     {
         Vector3 xPos = enemyBody.transform.position;
 
-        if (!enemyTurned)
-        {
-            enemyBody.transform.position = xPos + movementSpeed * Time.deltaTime * new Vector3(0.5f, 0, 0);
-        }
-        else
-        {
-            enemyBody.transform.position = xPos + movementSpeed * Time.deltaTime * new Vector3(-0.5f, 0, 0);
-        }
+        enemyBody.transform.position = !enemyTurned
+            ? xPos + (movementSpeed * Time.deltaTime * new Vector3(0.5f, 0, 0))
+            : xPos + (movementSpeed * Time.deltaTime * new Vector3(-0.5f, 0, 0));
 
         if (xPos.x > PosEnemy.x + 2 && !enemyTurned)
         {
@@ -80,26 +67,6 @@ public class Controller : MonoBehaviour
             Turn(enemyBody);
             enemyTurned = false;
         }
-
-    }
-
-    //Permet de faire bouger une plateforme sur l'axe des Y
-    private void PlatformMove()
-    {
-        if (Platform.transform.position.y < OriginPlatform.y + 1 && PlatformGoingUp)
-        {
-            Platform.transform.position = Platform.transform.position + Time.deltaTime * new Vector3(0, 1, 0);
-        }
-        else if (Platform.transform.position.y > OriginPlatform.y - 2)
-        {
-            PlatformGoingUp = false;
-            Platform.transform.position = Platform.transform.position + Time.deltaTime * new Vector3(0, -1, 0);
-        }
-        else
-        {
-            PlatformGoingUp = true;
-        }
-        
     }
 
     //Fait sauter le personnage et permet a l'animator de jouer le sprite correspondant
@@ -116,34 +83,10 @@ public class Controller : MonoBehaviour
         }
     }
 
-    public void ReloadScene()
-    {
-        if (lives == 0)
-        {
-            SceneManager.LoadScene(1);
-        }
-    }
-
-    //Animation et suppression des vies
-    private void LoseHeart()
-    {
-        Animator heartAnimator = hearts[lives].GetComponent<Animator>();
-        heartAnimator.Play("heart_brocken");
-
-        if (lives > 0)
-        {
-            lives--;
-        }
-        else
-        {
-            canDie = true;
-        }
-    }
-
     //Joue l'animation de mort et enclenche la fonction Restart (event de l'animator)
     private void Die()
     {
-        LoseHeart();
+        heartsClass.LoseHeart();
         animator.Play("blueDie");
         NotMove();
     }
@@ -166,7 +109,6 @@ public class Controller : MonoBehaviour
         {
             Turn(body);
             facingRight = false;
-
         }
         else if ((Input.GetAxis("Horizontal") > 0) && !facingRight)
         {
@@ -190,10 +132,9 @@ public class Controller : MonoBehaviour
     //Reset la position du personnage a 0
     private void Restart()
     {
-        Debug.Log(lives);
-        if (canDie)
+        if (heartsClass.CanDie())
         {
-            ReloadScene();
+            scenesClass.ReloadScene();
         }
         else
         {
@@ -204,7 +145,7 @@ public class Controller : MonoBehaviour
     }
 
     //Gère les collisions
-    void OnCollisionEnter2D(Collision2D col)
+    private void OnCollisionEnter2D(Collision2D col)
     {
         //Si on rentre en contact avec une scie ou un ennemi le personnage meurt
         if (col.collider.name == "Saw" | col.collider.name == "FrogEnemy")
@@ -213,36 +154,24 @@ public class Controller : MonoBehaviour
         }
     }
 
-    void FruitCollected()
-    {
-        Debug.Log("hello");
-        FruitAnimator.SetBool("isFruitCollected", true);
-    }
-
-    public void FruitGone()
-    {
-        Destroy(FruitAnimator.gameObject, 0.50f);
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.name != "Kiwi")
         {
-            Debug.Log(collision);
             checkpoint = collision.transform.position;
-        } else
-        {
-            FruitCollected();
-            FruitGone();
         }
-
+        else
+        {
+            collectiblesClass.FruitCollected(collision);
+            collectiblesClass.FruitGone(collision);
+        }
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         EnemyMovement();
         PlayerMovement();
-        PlatformMove();
+        platformClass.PlatformMove();
     }
 }
