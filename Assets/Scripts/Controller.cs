@@ -5,24 +5,21 @@ public class Controller : MonoBehaviour
     public float movementSpeed = 5;
     public float jumpForce;
     private Rigidbody2D body;
-    private Rigidbody2D enemyBody;
     private bool facingRight = true;
     public Animator animator;
     private Vector3 checkpoint = new Vector3(0, 0, 0);
     private bool canMove = true;
-    private bool enemyTurned = false;
-    private Vector3 PosEnemy;
     private Platform platformClass;
     private Collectibles collectiblesClass;
     public Hearts heartsClass;
     private Scenes scenesClass;
+    private Enemy enemyClass;
 
     // Start is called before the first frame update
     private void Start()
     {
         body = GetComponent<Rigidbody2D>();
-        enemyBody = GameObject.Find("FrogEnemy").GetComponent<Rigidbody2D>();
-        PosEnemy = enemyBody.transform.position;
+        enemyClass = GameObject.Find("FrogEnemy").GetComponent<Enemy>();
         platformClass = GameObject.Find("Platform").GetComponent<Platform>();
         heartsClass = gameObject.GetComponent<Hearts>();
         scenesClass = GameObject.Find("Scene").GetComponent<Scenes>();
@@ -45,27 +42,6 @@ public class Controller : MonoBehaviour
             Move();
             CharacterTurn();
             Jump();
-        }
-    }
-
-    //Ennemi bouge et tourne
-    private void EnemyMovement()
-    {
-        Vector3 xPos = enemyBody.transform.position;
-
-        enemyBody.transform.position = !enemyTurned
-            ? xPos + (movementSpeed * Time.deltaTime * new Vector3(0.5f, 0, 0))
-            : xPos + (movementSpeed * Time.deltaTime * new Vector3(-0.5f, 0, 0));
-
-        if (xPos.x > PosEnemy.x + 2 && !enemyTurned)
-        {
-            Turn(enemyBody);
-            enemyTurned = true;
-        }
-        else if (xPos.x < PosEnemy.x - 2 && enemyTurned)
-        {
-            Turn(enemyBody);
-            enemyTurned = false;
         }
     }
 
@@ -170,7 +146,7 @@ public class Controller : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        EnemyMovement();
+        enemyClass.EnemyMovement();
         PlayerMovement();
         platformClass.PlatformMove();
     }

@@ -7,7 +7,7 @@ public class Platform : MonoBehaviour
     private bool PlatformGoingUp = true;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         platform = GameObject.Find("Platform");
         OriginPlatform = platform.transform.position;
@@ -31,7 +31,7 @@ public class Platform : MonoBehaviour
         }
     }
 
-    public GameObject getPlatform()
+    public GameObject GetPlatform()
     {
         return platform;
     }
